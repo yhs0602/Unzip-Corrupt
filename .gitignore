@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+bin/
+gen/
+obj/
+libs/*/*.so
+
+=======
 # Built application files
 *.apk
 *.ap_
@@ -63,3 +70,4 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+>>>>>>> branch 'master' of https://github.com/KYHSGeekCode/SimplestCUI-for-Android.git
