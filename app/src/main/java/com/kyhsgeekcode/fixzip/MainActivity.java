@@ -16,6 +16,9 @@ public class MainActivity extends Activity implements View.OnClickListener,ICons
 				@Override
 				public void run()
 				{
+					//avoid OutOfMemoryError
+					if(adapter.getCount()>10000)
+						adapter.remove(adapter.getItem(0));
 					adapter.add(s);
 					adapter.notifyDataSetChanged();
 					return ;
@@ -89,7 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener,ICons
 				@Override
 				public void run()
 				{
-					TestProgram.Run(MainActivity.this);
+					FixZip.Run(MainActivity.this);
 					print("Program finished");
 					//isInputMode=true;
 					return ;
