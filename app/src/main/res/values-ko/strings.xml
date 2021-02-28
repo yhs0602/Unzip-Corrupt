@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FixZip</string>
+    <string name="finish">작업이 완료되었습니다.</string>
+    <string name="begin">작업이 시작되었습니다.</string>
+    <string name="rezipq">압축을 푼 파일을 다시 압축할까요(y/n)?</string>
+    <string name="logfileerr">로그 파일 생성에 실패했습니다.</string>
+    <string name="enterpath">손상된 zip 파일에 대한 경로를 입력하세요. 내장 메모리 최상위 위치는 /sdcard/입니다. 예시: /sdcard/중요 자료.zip 다운로드 폴더는 /sdcard/Download/입니다. 예시; /sdcard/Download/중요한자료.zip</string>
+    <string name="pass">파일 %1$s 이(가) 이미 존재하므로 패스합니다.</string>
+    <string name="grantPerm">파일 입출력 권한을 주셔야 합니다.</string>
+</resources>

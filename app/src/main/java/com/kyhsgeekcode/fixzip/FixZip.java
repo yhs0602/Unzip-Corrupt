@@ -1,8 +1,11 @@
 package com.kyhsgeekcode.fixzip;
 
+import android.Manifest;
+import android.content.pm.PermissionInfo;
 import android.util.*;
 import java.io.*;
 import java.lang.reflect.*;
+import java.security.Permissions;
 import java.util.*;
 import java.util.zip.*;
 
@@ -15,8 +18,18 @@ public class FixZip
 		File logfile=new File("/sdcard/fixzip.log");
 		String yn="";
 		boolean archive=false;
+		boolean hasPermission=false;
+		a.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},2000);
+		synchronized (a)
+		{
+			try {
+				a.wait();
+			} catch (InterruptedException e) {
+				a.print(Log.getStackTraceString(e));
+			}
+		}
 		do{
-			a.print("Archive again(y) or extract only(n)?");
+			a.print(a.getString(R.string.rezipq));
 			try
 			{
 				yn = a.readLine();
@@ -32,7 +45,7 @@ public class FixZip
 			{}
 		}while(true);
 		do{	
-			a.print("enter the path");
+			a.print(a.getString(R.string.enterpath));
 			try
 			{
 				path = a.readLine();
@@ -53,7 +66,7 @@ public class FixZip
 		catch (FileNotFoundException e)
 		{
 			Log.e("FixZip","log error",e);
-			a.print("log failed filenotfound");
+			a.print(a.getString(R.string.logfileerr));
 		}
 		try
 		{
@@ -61,6 +74,10 @@ public class FixZip
 			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
 			ZipEntry entry;
 			File outDir=new File(file.getParentFile(),file.getName()+"out/");
+			File outZip=new File(file.getParentFile(),file.getName()+".zip");
+			ZipOutputStream zos=null;
+			if(archive)
+				zos=new ZipOutputStream(new FileOutputStream(outZip));
 			File destFile;
 			entry=zis.getNextEntry();
 			ZipEntry lastEntry=entry;
@@ -74,8 +91,22 @@ public class FixZip
 					namesField.setAccessible(true);
 					HashSet<String> names = (HashSet<String>) namesField.get(out);
 					*/
-					entry=zis.getNextEntry();
+					a.print(a.getString(R.string.pass,destFile.getPath()));
+					if(archive) {
+						zos.putNextEntry(entry);
+						if(destFile.isFile()) {
+							FileInputStream fisf = new FileInputStream(destFile);
+							byte[] copybuf = new byte[4096];
+							int readf = 0;
+							while ((readf = fisf.read(copybuf, 0, 4096)) > 0)
+								zos.write(copybuf, 0, readf);
+							fisf.close();
+						}
+						zos.closeEntry();
+					}
+					entry = zis.getNextEntry();
 					continue;
+
 				}
 				try
 				{
@@ -90,13 +121,22 @@ public class FixZip
 						byte data[] = new byte[BUFFER_SIZE];
 						destFile.getParentFile().mkdirs();
 						FileOutputStream fos = new FileOutputStream(destFile);
+						if(archive)
+							zos.putNextEntry(entry);
 						dest = new BufferedOutputStream(fos, BUFFER_SIZE);
 						while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1)
 						{
 							dest.write(data, 0, count);
+							if(archive)
+								zos.write(data,0,count);
 						}
 						dest.flush();
 						dest.close();
+						if(archive)
+						{
+							zos.flush();;
+							zos.closeEntry();;
+						}
 						fos.close();
 					}
 					entry = zis.getNextEntry();
@@ -122,6 +162,10 @@ public class FixZip
 			}
 			zis.close();
 			fis.close();
+			if(archive) {
+				zos.flush();
+				zos.close();
+			}
 		}
 		catch (IOException e)
 		{

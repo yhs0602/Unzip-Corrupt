@@ -2,6 +2,12 @@
 <resources>
 
     <string name="app_name">FixZip</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="finish">Program finished</string>
+    <string name="begin">Program started</string>
+    <string name="rezipq">Do you want to archive the extracted files again(y) or not(n)?</string>
+    <string name="logfileerr">Creating log file failed.</string>
+    <string name="enterpath">Enter the path to the corrupt zip archive file:. The top directory of the phone\'s internal storage is /sdcard/. Example: /sdcard/important.zip The download folder is at /sdcard/Download/. Example: /sdcard/Download/important_files.zip</string>
+    <string name="pass">Target file %1$s already exists, pass</string>
+    <string name="grantPerm">You need to grant permission</string>
 
 </resources>
