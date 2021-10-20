@@ -1,138 +1,118 @@
 package com.kyhsgeekcode.fixzip;
 
-import android.util.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.zip.*;
+import android.util.Log;
 
-public class FixZip
-{
-	public static void Run(MainActivity a)
-	{
-		String path = "";
-		File file=new File("");
-		File logfile=new File("/sdcard/fixzip.log");
-		String yn="";
-		boolean archive=false;
-		do{
-			a.print("Archive again(y) or extract only(n)?");
-			try
-			{
-				yn = a.readLine();
-				if("y".equalsIgnoreCase(yn))
-					archive=true;
-				else if("n".equalsIgnoreCase(yn))
-					archive=false;
-				else
-					continue;
-				break;
-			}
-			catch (InterruptedException e)
-			{}
-		}while(true);
-		do{	
-			a.print("enter the path");
-			try
-			{
-				path = a.readLine();
-			}
-			catch (InterruptedException e)
-			{
-				a.print(Log.getStackTraceString(e));
-			}
-			file = new File(path);
-		}while(!file.exists());
-		final int BUFFER_SIZE = 1024;
-		BufferedOutputStream dest = null;
-		FileOutputStream logfos = null;
-		try
-		{
-			 logfos=new FileOutputStream(logfile);
-		}
-		catch (FileNotFoundException e)
-		{
-			Log.e("FixZip","log error",e);
-			a.print("log failed filenotfound");
-		}
-		try
-		{
-			FileInputStream fis = new FileInputStream(file);
-			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-			ZipEntry entry;
-			File outDir=new File(file.getParentFile(),file.getName()+"out/");
-			File destFile;
-			entry=zis.getNextEntry();
-			ZipEntry lastEntry=entry;
-			while (entry != null) {
-				a.print( entry.getName());
-				destFile=new File(outDir,entry.getName());
-				if(destFile.exists())
-				{
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+public class FixZip {
+    public static void Run(MainActivity a) {
+        String path = "";
+        File file = new File("");
+        File logfile = new File("/sdcard/fixzip.log");
+        String yn = "";
+        boolean archive = false;
+        do {
+            a.print("Archive again(y) or extract only(n)?");
+            try {
+                yn = a.readLine();
+                if ("y".equalsIgnoreCase(yn))
+                    archive = true;
+                else if ("n".equalsIgnoreCase(yn))
+                    archive = false;
+                else
+                    continue;
+                break;
+            } catch (InterruptedException e) {
+            }
+        } while (true);
+        do {
+            a.print("enter the path");
+            try {
+                path = a.readLine();
+            } catch (InterruptedException e) {
+                a.print(Log.getStackTraceString(e));
+            }
+            file = new File(path);
+        } while (!file.exists());
+        final int BUFFER_SIZE = 1024;
+        BufferedOutputStream dest = null;
+        FileOutputStream logfos = null;
+        try {
+            logfos = new FileOutputStream(logfile);
+        } catch (FileNotFoundException e) {
+            Log.e("FixZip", "log error", e);
+            a.print("log failed filenotfound");
+        }
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+            ZipEntry entry;
+            File outDir = new File(file.getParentFile(), file.getName() + "out/");
+            File destFile;
+            entry = zis.getNextEntry();
+            ZipEntry lastEntry = entry;
+            while (entry != null) {
+                a.print(entry.getName());
+                destFile = new File(outDir, entry.getName());
+                if (destFile.exists()) {
 					/*
 					Field namesField = ZipOutputStream.getDeclaredField("names");
 					namesField.setAccessible(true);
 					HashSet<String> names = (HashSet<String>) namesField.get(out);
 					*/
-					entry=zis.getNextEntry();
-					continue;
-				}
-				try
-				{
-					if (entry.isDirectory())
-					{
-						destFile.mkdirs();
-						continue;
-					}
-					else
-					{
-						int count;
-						byte data[] = new byte[BUFFER_SIZE];
-						destFile.getParentFile().mkdirs();
-						FileOutputStream fos = new FileOutputStream(destFile);
-						dest = new BufferedOutputStream(fos, BUFFER_SIZE);
-						while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1)
-						{
-							dest.write(data, 0, count);
-						}
-						dest.flush();
-						dest.close();
-						fos.close();
-					}
-					entry = zis.getNextEntry();
-					if(entry!=null)
-					{
-						if(entry.equals(lastEntry))
-						{
-							zis.read();
-							entry=zis.getNextEntry();
-						}
-					}
-					lastEntry=entry;
-				}
-				catch (Exception e)
-				{
-					a.print(Log.getStackTraceString(e));
-					Log.e("FixZip","entry="+entry.getName(),e);
-					if(logfos!=null)
-					{
-						logfos.write(("entry="+entry.getName()+ Log.getStackTraceString(e)+System.lineSeparator()).getBytes());
-					}
-				}
-			}
-			zis.close();
-			fis.close();
-		}
-		catch (IOException e)
-		{
-			a.print(Log.getStackTraceString(e));
-		}
-		try
-		{
-			logfos.close();
-		}
-		catch (IOException e)
-		{}
+                    entry = zis.getNextEntry();
+                    continue;
+                }
+                try {
+                    if (entry.isDirectory()) {
+                        destFile.mkdirs();
+                        continue;
+                    } else {
+                        int count;
+                        byte data[] = new byte[BUFFER_SIZE];
+                        destFile.getParentFile().mkdirs();
+                        FileOutputStream fos = new FileOutputStream(destFile);
+                        dest = new BufferedOutputStream(fos, BUFFER_SIZE);
+                        while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
+                            dest.write(data, 0, count);
+                        }
+                        dest.flush();
+                        dest.close();
+                        fos.close();
+                    }
+                    entry = zis.getNextEntry();
+                    if (entry != null) {
+                        if (entry.equals(lastEntry)) {
+                            zis.read();
+                            entry = zis.getNextEntry();
+                        }
+                    }
+                    lastEntry = entry;
+                } catch (Exception e) {
+                    a.print(Log.getStackTraceString(e));
+                    Log.e("FixZip", "entry=" + entry.getName(), e);
+                    if (logfos != null) {
+                        logfos.write(("entry=" + entry.getName() + Log.getStackTraceString(e) + System.lineSeparator()).getBytes());
+                    }
+                }
+            }
+            zis.close();
+            fis.close();
+        } catch (IOException e) {
+            a.print(Log.getStackTraceString(e));
+        }
+        try {
+            logfos.close();
+        } catch (IOException e) {
+        }
 		/*doesn't eork on corrupt files
 		try
 		{
@@ -151,7 +131,7 @@ public class FixZip
 		{
 			a.print(Log.getStackTraceString(e));
 		}*/
-	}
+    }
 	/*
 	public void unzipFileIntoDirectory(File archive, File destinationDir) 
     throws Exception {

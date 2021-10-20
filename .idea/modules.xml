@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Unzip-Corrupt.iml" filepath="$PROJECT_DIR$/.idea/modules/Unzip-Corrupt.iml" group="Unzip-Corrupt" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Unzip-Corrupt/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Unzip-Corrupt.iml" filepath="$PROJECT_DIR$/.idea/modules/Unzip-Corrupt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Unzip-Corrupt.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Unzip-Corrupt.app.iml" />
     </modules>
   </component>
 </project>
