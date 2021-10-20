@@ -1,6 +1,9 @@
 package com.kyhsgeekcode.fixzip
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -43,7 +46,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
         adapter!!.add("$$input")
         adapter!!.notifyDataSetChanged()
         lock.complete(Unit)
-        return
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.menu_download -> {
+                downloadResources()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun downloadResources() {
+        Timber.d("Helo world download resource")
     }
 
     lateinit var btGo: Button
