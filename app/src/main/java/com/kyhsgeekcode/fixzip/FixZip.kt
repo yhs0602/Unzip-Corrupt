@@ -1,6 +1,7 @@
 package com.kyhsgeekcode.fixzip
 
 import android.util.Log
+import timber.log.Timber
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -13,12 +14,16 @@ object FixZip {
         var yn = ""
         var archive = false
         do {
+            Timber.d("Asking")
             a.print("Archive again(y) or extract only(n)?")
             try {
                 yn = a.readLine()
-                archive = if ("y".equals(yn, ignoreCase = true)) true else if ("n".equals(yn,
-                        ignoreCase = true)
-                ) false else continue
+                archive =
+                    if ("y".equals(yn, ignoreCase = true))
+                        true
+                    else if ("n".equals(yn, ignoreCase = true))
+                        false
+                    else continue
                 break
             } catch (e: InterruptedException) {
             }

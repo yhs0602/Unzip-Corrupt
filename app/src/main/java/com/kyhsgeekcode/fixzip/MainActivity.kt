@@ -10,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import timber.log.Timber.*
 import java.util.*
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     override fun print(s: String?) {
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     override suspend fun readLine(): String {
         isInputMode = true
         lock.await()
+        lock = CompletableDeferred()
         isInputMode = false
         return input
     }
@@ -49,9 +53,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     private var isInputMode = false
     private var input = ""
     private var adapter: ArrayAdapter<String>? = null
-    var lock = CompletableDeferred(Unit)
+    var lock = CompletableDeferred<Unit>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.plant(DebugTree())
         setContentView(R.layout.main)
         btGo = findViewById(R.id.mainBTDo)
         etCommand = findViewById(R.id.mainETCommand)
@@ -65,8 +70,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
         lvScreen.adapter = adapter
         btGo.setOnClickListener(this)
         isInputMode = false
+
+        Timber.d("Oncreate finish.")
         lifecycleScope.launch {
+            Timber.d("Launch.")
             FixZip.Run(this@MainActivity)
+            Timber.d("Run finished")
             print("Program finished")
         }
     }
