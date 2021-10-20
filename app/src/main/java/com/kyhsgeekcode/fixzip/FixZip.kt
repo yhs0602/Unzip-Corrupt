@@ -1,119 +1,103 @@
-package com.kyhsgeekcode.fixzip;
+package com.kyhsgeekcode.fixzip
 
-import android.util.Log;
+import android.util.Log
+import java.io.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-public class FixZip {
-    public static void Run(MainActivity a) {
-        String path = "";
-        File file = new File("");
-        File logfile = new File("/sdcard/fixzip.log");
-        String yn = "";
-        boolean archive = false;
+object FixZip {
+    suspend fun Run(a: MainActivity) {
+        var path = ""
+        var file = File("")
+        val logfile = File("/sdcard/fixzip.log")
+        var yn = ""
+        var archive = false
         do {
-            a.print("Archive again(y) or extract only(n)?");
+            a.print("Archive again(y) or extract only(n)?")
             try {
-                yn = a.readLine();
-                if ("y".equalsIgnoreCase(yn))
-                    archive = true;
-                else if ("n".equalsIgnoreCase(yn))
-                    archive = false;
-                else
-                    continue;
-                break;
-            } catch (InterruptedException e) {
+                yn = a.readLine()
+                archive = if ("y".equals(yn, ignoreCase = true)) true else if ("n".equals(yn,
+                        ignoreCase = true)
+                ) false else continue
+                break
+            } catch (e: InterruptedException) {
             }
-        } while (true);
+        } while (true)
         do {
-            a.print("enter the path");
-            try {
-                path = a.readLine();
-            } catch (InterruptedException e) {
-                a.print(Log.getStackTraceString(e));
-            }
-            file = new File(path);
-        } while (!file.exists());
-        final int BUFFER_SIZE = 1024;
-        BufferedOutputStream dest = null;
-        FileOutputStream logfos = null;
+            a.print("enter the path")
+            path = a.readLine()
+            file = File(path)
+        } while (!file.exists())
+        val BUFFER_SIZE = 1024
+        var dest: BufferedOutputStream? = null
+//        var logfos: FileOutputStream? = null
+//        try {
+//            logfos = FileOutputStream(logfile)
+//        } catch (e: FileNotFoundException) {
+//            Log.e("FixZip", "log error", e)
+//            a.print("log failed filenotfound")
+//        }
         try {
-            logfos = new FileOutputStream(logfile);
-        } catch (FileNotFoundException e) {
-            Log.e("FixZip", "log error", e);
-            a.print("log failed filenotfound");
-        }
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-            ZipEntry entry;
-            File outDir = new File(file.getParentFile(), file.getName() + "out/");
-            File destFile;
-            entry = zis.getNextEntry();
-            ZipEntry lastEntry = entry;
+            val fis = FileInputStream(file)
+            val zis = ZipInputStream(BufferedInputStream(fis))
+            var entry: ZipEntry?
+            val outDir = File(file.parentFile, file.name + "out/")
+            var destFile: File
+            entry = zis.nextEntry
+            var lastEntry = entry
             while (entry != null) {
-                a.print(entry.getName());
-                destFile = new File(outDir, entry.getName());
+                a.print(entry.name)
+                destFile = File(outDir, entry.name)
                 if (destFile.exists()) {
-					/*
+                    /*
 					Field namesField = ZipOutputStream.getDeclaredField("names");
 					namesField.setAccessible(true);
 					HashSet<String> names = (HashSet<String>) namesField.get(out);
 					*/
-                    entry = zis.getNextEntry();
-                    continue;
+                    entry = zis.nextEntry
+                    continue
                 }
                 try {
-                    if (entry.isDirectory()) {
-                        destFile.mkdirs();
-                        continue;
+                    if (entry.isDirectory) {
+                        destFile.mkdirs()
+                        continue
                     } else {
-                        int count;
-                        byte data[] = new byte[BUFFER_SIZE];
-                        destFile.getParentFile().mkdirs();
-                        FileOutputStream fos = new FileOutputStream(destFile);
-                        dest = new BufferedOutputStream(fos, BUFFER_SIZE);
-                        while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
-                            dest.write(data, 0, count);
+                        var count: Int
+                        val data = ByteArray(BUFFER_SIZE)
+                        destFile.parentFile.mkdirs()
+                        val fos = FileOutputStream(destFile)
+                        dest = BufferedOutputStream(fos, BUFFER_SIZE)
+                        while (zis.read(data, 0, BUFFER_SIZE).also { count = it } != -1) {
+                            dest.write(data, 0, count)
                         }
-                        dest.flush();
-                        dest.close();
-                        fos.close();
+                        dest.flush()
+                        dest.close()
+                        fos.close()
                     }
-                    entry = zis.getNextEntry();
+                    entry = zis.nextEntry
                     if (entry != null) {
-                        if (entry.equals(lastEntry)) {
-                            zis.read();
-                            entry = zis.getNextEntry();
+                        if (entry == lastEntry) {
+                            zis.read()
+                            entry = zis.nextEntry
                         }
                     }
-                    lastEntry = entry;
-                } catch (Exception e) {
-                    a.print(Log.getStackTraceString(e));
-                    Log.e("FixZip", "entry=" + entry.getName(), e);
-                    if (logfos != null) {
-                        logfos.write(("entry=" + entry.getName() + Log.getStackTraceString(e) + System.lineSeparator()).getBytes());
-                    }
+                    lastEntry = entry
+                } catch (e: Exception) {
+                    a.print(Log.getStackTraceString(e))
+                    Log.e("FixZip", "entry=" + entry.name, e)
+//                    logfos?.write(("entry=" + entry.name + Log.getStackTraceString(e) + System.lineSeparator()).toByteArray())
                 }
             }
-            zis.close();
-            fis.close();
-        } catch (IOException e) {
-            a.print(Log.getStackTraceString(e));
+            zis.close()
+            fis.close()
+        } catch (e: IOException) {
+            a.print(Log.getStackTraceString(e))
         }
-        try {
-            logfos.close();
-        } catch (IOException e) {
-        }
-		/*doesn't eork on corrupt files
+//        try {
+//            logfos!!.close()
+//        } catch (e: IOException) {
+//        }
+        /*doesn't eork on corrupt files
 		try
 		{
 			ZipFile zfile=new ZipFile(file);
@@ -131,8 +115,7 @@ public class FixZip {
 		{
 			a.print(Log.getStackTraceString(e));
 		}*/
-    }
-	/*
+    } /*
 	public void unzipFileIntoDirectory(File archive, File destinationDir) 
     throws Exception {
 		final int BUFFER_SIZE = 1024;
@@ -164,7 +147,7 @@ public class FixZip {
 		fis.close();
 	}
 	*/
-	/*
+    /*
 	private void extractFolder(String zipFile, String extractFolder) 
 	{
 		try
@@ -223,7 +206,7 @@ public class FixZip {
 			Log("ERROR: " + e.getMessage());
 		}
 		*/
-		/*
+    /*
 	private void addFolderToZip(File folder, ZipOutputStream zip, String baseName) throws IOException
 	{
 		File[] files = folder.listFiles();
