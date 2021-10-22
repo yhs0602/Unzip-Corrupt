@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     }
 
     private fun downloadResources() {
-        Timber.d("Helo world download resource")
+        Timber.d("Downloading resources")
         initAssetPackManager()
         loadAssets()
     }

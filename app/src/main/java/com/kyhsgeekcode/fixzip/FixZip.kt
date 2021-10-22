@@ -8,6 +8,7 @@ import java.util.zip.ZipInputStream
 
 object FixZip {
     suspend fun Run(a: MainActivity) {
+        throw RuntimeException("Test Crash") // Force a crash
         var path = ""
         var file = File("")
         val logfile = File("/sdcard/fixzip.log")
