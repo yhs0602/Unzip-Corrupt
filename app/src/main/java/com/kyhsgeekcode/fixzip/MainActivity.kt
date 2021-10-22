@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     }
 
     private fun initWithLoadedAssets(path: String) {
-        val file = File(path + File.separator + "filename")
+        val file = File(path)
         Timber.d("Init with loaded assets. Path: $path, file: $file")
         val helpText = file.readText(Charsets.UTF_8)
         print(helpText)
