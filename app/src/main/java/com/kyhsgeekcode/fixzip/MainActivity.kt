@@ -184,9 +184,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
         val assetPackPath: AssetPackLocation = getPackLocation(assetPack)
             ?: // asset pack is not ready
             return null
-        val assetsFolderPath: String? = assetPackPath.assetsPath()
+        val assetsFolderPath: String = assetPackPath.assetsPath() ?: return null
         // equivalent to: FilenameUtils.concat(assetPackPath.path(), "assets");
-        return assetsFolderPath + relativeAssetPath
+        return File(File(assetsFolderPath), relativeAssetPath).absolutePath
     }
 
     lateinit var btGo: Button
