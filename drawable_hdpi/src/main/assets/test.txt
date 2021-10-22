@@ -1,1 +1,11 @@
-asset test.
+How to use this app
+
+This app will fix your corrupt zip file.
+
+First, answer to what the app is asking.
+
+Then, wait for it to finish fixing.
+
+This help is for hdpi device.
+
+Have a nice day!

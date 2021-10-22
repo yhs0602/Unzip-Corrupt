@@ -84,9 +84,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
 
     private fun loadAssets() {
         val onDemandAssetPackPath: String? =
-            assetPackManager.getAbsoluteAssetPath(packName, "")
+            assetPackManager.getAbsoluteAssetPath(packName, "test.txt")
         if (onDemandAssetPackPath == null) {
-            Timber.d(" OnDemand AssetPath : Null; fetching")
+            Timber.d(" OnDemand AssetPath : Null; fetching packname: $packName")
             assetPackManager.registerListener(assetPackStateUpdateListener)
             assetPackManager.fetch(listOf(packName)).addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -104,8 +104,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
     }
 
     private fun initWithLoadedAssets(path: String) {
-        Timber.d("Init with loaded assets $path")
         val file = File(path + File.separator + "filename")
+        Timber.d("Init with loaded assets. Path: $path, file: $file")
+        val helpText = file.readText(Charsets.UTF_8)
+        print(helpText)
     }
 
     private var assetPackStateUpdateListener =
@@ -228,7 +230,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, IConsole {
         }
     }
 
-    private fun packNameByDensity() = "drawable-${getDensity()}"
+    private fun packNameByDensity() = "drawable_${getDensity()}"
 
     private fun getDensity(): String {
         return "hdpi"
